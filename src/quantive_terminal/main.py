@@ -64,7 +64,7 @@ def main():
         executor.run_loop(config.POLL_INTERVAL_SEC)
 
     elif args.command == "status":
-        from position_manager import PositionManager
+        from .position_manager import PositionManager
         pm = PositionManager()
         positions = pm.get_open_positions()
         if positions:

@@ -118,6 +118,9 @@ class Executor:
         for sid, pos in orphans:
             log.warning(f"Orphan position: {sid} {pos['side']} entry={pos['entry_price']}")
             if orphan_action == "close":
-                symbol = pos["version_code"].split("_")[0] + "USDT"
+                # version_code looks like BTC_1H_V1_RR2 — first part is asset
+                vc = pos.get("version_code", "")
+                asset = vc.split("_")[0] if vc else "BTC"
+                symbol = pos.get("symbol") or f"{asset}USDT"
                 self.exchange.close_position(symbol)
                 self.positions.close_position(sid, 0, reason="orphan_close")
