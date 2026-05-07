@@ -33,6 +33,13 @@ class SignalClient:
     def health(self):
         return self._get("/api/v1/health")
 
+    def validate_api_key(self):
+        data = self._get("/api/v1/auth/me")
+        if data:
+            subs = [s["version_code"] for s in data.get("subscriptions", [])]
+            return True, subs
+        return False, []
+
     def get_subscriptions(self):
         data = self._get("/api/v1/auth/me")
         if data:

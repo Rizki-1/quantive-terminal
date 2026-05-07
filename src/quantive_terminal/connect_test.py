@@ -44,10 +44,12 @@ def run_connect_test():
 
     print(f"\n[2] API Key")
     try:
-        subs = client.get_subscriptions()
-        if subs is None:
-            print(f"  [FAIL] API key invalid")
+        valid, subs = client.validate_api_key()
+        if not valid:
+            print(f"  [FAIL] API key invalid or expired — get one at {config.QUANTIVE_API_BASE}/dashboard")
             errors.append("API key")
+        elif not subs:
+            print(f"  [WARN] API key valid but no active subscriptions")
         else:
             print(f"  [OK] API key valid — {len(subs)} subscription(s)")
     except Exception as e:

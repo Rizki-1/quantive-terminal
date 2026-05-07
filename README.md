@@ -11,6 +11,8 @@ Connect to [dash.quantive.my.id](https://dash.quantive.my.id) to receive trading
 ```bash
 git clone <repo-url> quantive-terminal
 cd quantive-terminal
+python3 -m venv .venv
+source .venv/bin/activate
 pip install -e .
 cp config.example.env .env
 ```
@@ -66,6 +68,14 @@ quantive-terminal run      # Start trading
 ## VPS Deployment
 
 ```bash
+# Install (one time)
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -e .
+cp config.example.env .env
+quantive-terminal setup
+
+# Register service
 sudo cp systemd/quantive-terminal.service /etc/systemd/system/
 sudo systemctl daemon-reload
 sudo systemctl enable --now quantive-terminal
