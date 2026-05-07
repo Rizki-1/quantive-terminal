@@ -1,0 +1,2 @@
+[console_scripts]
+quantive-terminal = quantive_terminal.main:main

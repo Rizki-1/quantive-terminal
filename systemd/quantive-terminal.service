@@ -1,0 +1,17 @@
+[Unit]
+Description=Quantive Terminal Client
+After=network.target
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/home/ubuntu/quantive-terminal
+EnvironmentFile=/home/ubuntu/quantive-terminal/.env
+ExecStart=/usr/bin/python3 -m quantive_terminal.main run
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
