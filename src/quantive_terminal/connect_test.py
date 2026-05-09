@@ -44,14 +44,17 @@ def run_connect_test():
 
     print(f"\n[2] API Key")
     try:
-        valid, subs = client.validate_api_key()
+        valid, subs, profile = client.validate_api_key()
         if not valid:
             print(f"  [FAIL] API key invalid or expired — get one at {config.QUANTIVE_API_BASE}/dashboard")
             errors.append("API key")
         elif not subs:
             print(f"  [WARN] API key valid but no active subscriptions")
         else:
-            print(f"  [OK] API key valid — {len(subs)} subscription(s)")
+            tier = profile.get("tier", "?").upper()
+            max_v = profile.get("max_versions", "?")
+            scope = "ALL" if str(max_v) == "99" else f"SINGLE ({max_v})"
+            print(f"  [OK] API key valid — tier: {tier}  scope: {scope}  subscriptions: {len(subs)}")
     except Exception as e:
         print(f"  [FAIL] API key check failed: {e}")
         errors.append("API key")

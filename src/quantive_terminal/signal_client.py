@@ -14,7 +14,7 @@ class SignalClient:
         self.session = requests.Session()
         self.session.headers.update({
             "X-Quantive-Key": self.api_key,
-            "User-Agent": "quantive-terminal/0.1.0",
+            "User-Agent": "quantive-terminal/0.2.0",
         })
 
     def _get(self, path, params=None):
@@ -30,15 +30,29 @@ class SignalClient:
             log.error(f"API request failed: {e}")
             return None
 
+    def _post(self, path, body=None):
+        url = f"{self.base}{path}"
+        try:
+            r = self.session.post(url, json=body or {}, timeout=10)
+            if r.status_code == 401:
+                log.error("API key invalid or expired")
+                return None
+            r.raise_for_status()
+            return r.json()
+        except requests.RequestException as e:
+            log.error(f"API request failed: {e}")
+            return None
+
     def health(self):
         return self._get("/api/v1/health")
 
     def validate_api_key(self):
+        """Returns (valid: bool, subscriptions: list[str], profile: dict)."""
         data = self._get("/api/v1/auth/me")
         if data:
             subs = [s["version_code"] for s in data.get("subscriptions", [])]
-            return True, subs
-        return False, []
+            return True, subs, data
+        return False, [], {}
 
     def get_subscriptions(self):
         data = self._get("/api/v1/auth/me")
@@ -61,6 +75,14 @@ class SignalClient:
                     s.get("issued_at", "") for s in data if "issued_at" in s
                 )
         return data or []
+
+    def push_version_config(self, version_code, risk_pct, allow_short=False, max_open_positions=1):
+        """Sync per-model risk config to server (best-effort, non-blocking)."""
+        return self._post(f"/api/v1/me/config/{version_code}", {
+            "risk_pct_per_trade": risk_pct,
+            "allow_short": allow_short,
+            "max_open_positions": max_open_positions,
+        })
 
     def get_balance_hint(self):
         profile = self._get("/api/v1/auth/me")

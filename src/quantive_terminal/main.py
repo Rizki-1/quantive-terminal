@@ -65,14 +65,22 @@ def main():
 
     elif args.command == "status":
         from .position_manager import PositionManager
+        subs = config.get_subscriptions()
+        print(f"\nActive models ({len(subs)}):")
+        for vc in subs:
+            print(f"  • {vc}  (risk: {config.get_risk_for(vc)}%)")
+
         pm = PositionManager()
         positions = pm.get_open_positions()
+        print(f"\nOpen positions ({len(positions)}):")
         if positions:
-            print(f"Open positions ({len(positions)}):")
             for p in positions:
-                print(f"  {p['version_code']} {p['side']} entry={p['entry_price']} size={p['size']}")
+                pnl_str = ""
+                if p.get("unrealized_pnl") is not None:
+                    pnl_str = f"  pnl={p['unrealized_pnl']:+.2f}"
+                print(f"  {p['version_code']} {p['side']}  entry={p['entry_price']}  size={p['size']}{pnl_str}")
         else:
-            print("No open positions")
+            print("  (none)")
 
     else:
         parser.print_help()

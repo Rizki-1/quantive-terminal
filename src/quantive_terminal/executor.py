@@ -20,11 +20,16 @@ class Executor:
         self.notifier = Notifier()
 
     def process_signal(self, signal):
+        from . import config as cfg
         signal_id = signal.get("signal_id", "")
-        action = signal.get("action", "OPEN").upper()
-        version = signal.get("version_code", "")
+        action    = signal.get("action", "OPEN").upper()
+        version   = signal.get("version_code", "")
 
         if self.dedup.is_duplicate(signal_id):
+            return
+
+        if not cfg.is_subscribed(version):
+            log.debug(f"Signal {signal_id} skipped — {version} not in local subscriptions")
             return
 
         if action == "OPEN":

@@ -51,6 +51,10 @@ def get_risk_for(version_code):
     return RISK_PCT_PER_TRADE
 
 
+def is_subscribed(version_code):
+    return version_code in get_subscriptions()
+
+
 def validate():
     errors = []
     if not QUANTIVE_API_KEY:
