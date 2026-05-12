@@ -57,7 +57,8 @@ class Executor:
         equity = result["equity"]
         size = result["size"]
 
-        order = self.exchange.market_order(symbol, side.lower(), size)
+        binance_side = "buy" if side == "LONG" else "sell"
+        order = self.exchange.market_order(symbol, binance_side, size)
         if not order:
             log.error("Order failed")
             return
