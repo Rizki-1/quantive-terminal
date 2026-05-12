@@ -33,8 +33,17 @@ class BinanceExchange(BaseExchange):
             log.error(f"fetch_ticker failed: {e}")
             return 0.0
 
+    def set_leverage(self, symbol, leverage):
+        try:
+            self.exchange.set_leverage(leverage, symbol)
+            log.info(f"Leverage set: {symbol} → {leverage}x")
+        except Exception as e:
+            log.warning(f"set_leverage failed (non-fatal): {e}")
+
     def market_order(self, symbol, side, amount, params=None):
         try:
+            from .. import config as cfg
+            self.set_leverage(symbol, cfg.LEVERAGE)
             order = self.exchange.create_order(
                 symbol, "market", side.lower(), amount, None, params or {}
             )

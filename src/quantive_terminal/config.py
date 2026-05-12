@@ -12,6 +12,7 @@ EXCHANGE_API_SECRET = os.getenv("EXCHANGE_API_SECRET", "")
 EXCHANGE_TESTNET = os.getenv("EXCHANGE_TESTNET", "false").lower() == "true"
 
 RISK_PCT_PER_TRADE = float(os.getenv("RISK_PCT_PER_TRADE", "1.0"))
+LEVERAGE = int(os.getenv("LEVERAGE", "10"))
 MAX_OPEN_POSITIONS = int(os.getenv("MAX_OPEN_POSITIONS", "2"))
 MAX_SLIPPAGE_PCT = float(os.getenv("MAX_SLIPPAGE_PCT", "0.3"))
 ALLOW_SHORT = os.getenv("ALLOW_SHORT", "false").lower() == "true"
